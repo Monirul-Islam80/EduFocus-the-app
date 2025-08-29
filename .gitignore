@@ -1,0 +1,59 @@
+# =====================
+# Node dependencies
+# =====================
+node_modules/
+
+# =====================
+# Expo / React Native
+# =====================
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+.metro-health-check*
+
+# =====================
+# Native / iOS / Android
+# =====================
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem
+
+# =====================
+# Debug logs
+# =====================
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# =====================
+# macOS files
+# =====================
+.DS_Store
+
+# =====================
+# Environment / Config
+# =====================
+.env
+.env*.local
+
+# =====================
+# TypeScript
+# =====================
+*.tsbuildinfo
+
+# =====================
+# Prisma generated client
+# =====================
+/src/generated/prisma/
+
+# =====================
+# Project folders
+# =====================
+frontend/node_modules/
+backend/node_modules/

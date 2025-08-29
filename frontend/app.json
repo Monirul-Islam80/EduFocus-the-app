@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "edufocus",
+    "slug": "edufocus",
+    "scheme": "edufocus",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/edufocusicon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/edufocusicon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#00FFFFFF"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.monirulislam.edufocus"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/edufocusicon.png",
+        "backgroundColor": "#00FFFFFF"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.monirulislam.frontend"
+    },
+    "web": {
+      "favicon": "./assets/edufocusicon.png"
+    },
+    "plugins": [
+      "expo-web-browser",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "e9631e76-6166-4cdc-89ea-7a3fdbd70b09"
+      }
+    }
+  }
+}

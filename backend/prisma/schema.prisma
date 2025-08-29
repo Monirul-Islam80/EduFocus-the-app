@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int          @id @default(autoincrement())
+  email      String       @unique
+  password   String
+  name       String?
+  role       String       @default("student") // student, teacher, admin
+  avatar     String?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  courses    CourseUser[]
+  messages   Message[]
+  chatModels ChatUser[]
+}
+
+model ChatModel {
+  id          Int        @id @default(autoincrement())
+  chatName    String
+  isGroupChat Boolean    @default(false)
+  description String?
+  users       ChatUser[]
+  messages    Message[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model ChatUser {
+  id       Int       @id @default(autoincrement())
+  role     String    @default("member") // admin, member
+  userId   Int
+  chatId   Int
+  user     User      @relation(fields: [userId], references: [id])
+  chat     ChatModel @relation(fields: [chatId], references: [id])
+  joinedAt DateTime  @default(now())
+}
+
+model Message {
+  id          Int        @id @default(autoincrement())
+  content     String
+  sender      User       @relation(fields: [senderId], references: [id])
+  senderId    Int
+  chatModel   ChatModel? @relation(fields: [chatModelId], references: [id])
+  chatModelId Int?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  Course      Course?    @relation(fields: [courseId], references: [id])
+  courseId    Int?
+}
+
+model Course {
+  id        Int          @id @default(autoincrement())
+  name      String
+  users     CourseUser[]
+  messages  Message[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model CourseUser {
+  id       Int    @id @default(autoincrement())
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId Int
+
+  @@unique([userId, courseId])
+}
