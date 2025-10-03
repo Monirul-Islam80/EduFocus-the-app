@@ -1,13 +1,10 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { Ionicons } from "@expo/vector-icons";
-import { NavigationContainer } from "@react-navigation/native";
-import TaskScreen from "../screens/homeScreens/TaskScreen";
 import CoursesScreen from "../screens/courseScreens/CoursesScreen";
-import ChatScreen from "../screens/ChatScreens/ChatScreen";
 import ProfileScreen from "../screens/userProfileScreens/ProfileScreen";
-import GroupsScreen from "../screens/ChatScreens/GroupsScreen";
 import ChatNavigator from "./ChatNavigator";
+import TaskNavigator from "./TaskNavigator";
 
 const Tab = createBottomTabNavigator();
 
@@ -28,7 +25,7 @@ export default function MainNavigator() {
         tabBarInactiveTintColor: "gray",
       })}
     >
-      <Tab.Screen name="Todos" component={TaskScreen} />
+      <Tab.Screen name="Todos" component={TaskNavigator} />
       <Tab.Screen name="Courses" component={CoursesScreen} />
       <Tab.Screen name="Chat" component={ChatNavigator} />
       <Tab.Screen name="Profile" component={ProfileScreen} />

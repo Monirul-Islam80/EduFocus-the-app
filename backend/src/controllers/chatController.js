@@ -56,6 +56,7 @@ exports.fetchChatList = async (req, res) => {
         id: u.user.id,
         name: u.user.name,
         email: u.user.email,
+        avatar: u.user.avatar,
       })),
     }));
     res.json(chatList);

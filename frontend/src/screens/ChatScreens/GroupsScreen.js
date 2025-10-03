@@ -26,7 +26,7 @@ import { setSelectedChat } from "../../store/slices/chatSlice";
 import { getIp } from "../../utils/ipaddress";
 const ip = getIp();
 const API_URL = "http://" + ip + ":5000";
-
+var socket;
 export default function GroupsScreen({ navigation }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
@@ -38,11 +38,10 @@ export default function GroupsScreen({ navigation }) {
   const [groupName, setGroupName] = useState("");
   const [groupMembers, setGroupMembers] = useState([""]);
   const [searchText, SetsearchText] = useState("");
+  const [newMessage, setNewMessage] = useState(null);
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
   const fetchGroups = async () => {
-    console.log("Faileddfsdf");
-
     try {
       const response = await axios.get(`${API_URL}/api/chat/chatList`, {
         headers: {
@@ -56,9 +55,6 @@ export default function GroupsScreen({ navigation }) {
       console.error("Error fetching groups:", error);
     }
   };
-  useEffect(() => {
-    fetchGroups();
-  }, []);
 
   const handleAddContact = async () => {
     if (!contactEmail.trim()) return;
@@ -150,7 +146,40 @@ export default function GroupsScreen({ navigation }) {
     setGroupMembers([""]);
     setGroupModal(false);
   };
+  useEffect(() => {
+    socket = io("http://" + ip + ":5000");
+    socket.emit("setup", user);
 
+    socket.on("connected", () => console.log("Socket connected"));
+
+    socket.on("message recieved", (newMessage) => {
+      console.log("New message received:", newMessage);
+      fetchGroups();
+    });
+
+    socket.on("new message notification", (newMessage) => {
+      console.log("New message notification:", newMessage);
+      fetchGroups();
+    });
+
+    return () => {
+      socket.off("message recieved");
+      socket.off("new message notification");
+    };
+  }, [user]);
+
+  useEffect(() => {
+    socket.on("new message notification", (message) => {
+      // setNewMessage(message);
+    });
+
+    return () => {
+      socket.off("new message notification");
+    };
+  }, [setSelectedChat]);
+  useEffect(() => {
+    fetchGroups();
+  }, []);
   const renderChatItem = ({ item }) => (
     <TouchableOpacity
       style={styles.chatItem}
@@ -159,11 +188,22 @@ export default function GroupsScreen({ navigation }) {
         navigation.navigate("ChatScreen");
       }}
     >
-      {item.avatar ? (
-        <Image source={{ uri: item.avatar }} style={styles.avatar} />
+      {!item.isGroupChat ? (
+        <Image
+          source={{
+            uri: item.users.find((u) => u.id !== user.id).avatar,
+          }}
+          style={styles.avatar}
+        />
       ) : (
         <View style={styles.groupAvatar}>
-          <Text style={styles.groupInitial}>{item.name[0]}</Text>
+          <Text style={styles.groupInitial}>
+            {item.isGroupChat
+              ? item.name[0]
+              : item.users.map((u) => {
+                  if (u.id !== user.id) return u.name[0];
+                })}
+          </Text>
         </View>
       )}
       <View style={styles.chatContent}>
@@ -178,7 +218,11 @@ export default function GroupsScreen({ navigation }) {
           <Text style={styles.time}>{item.time || ""}</Text>
         </View>
         <Text style={styles.message} numberOfLines={1}>
-          {item.message || "No messages yet"}
+          <Text style={styles.message} numberOfLines={1}>
+            {typeof item.message === "string"
+              ? item.message
+              : item.message?.content || "No messages yet"}
+          </Text>
         </Text>
       </View>
     </TouchableOpacity>
@@ -189,6 +233,7 @@ export default function GroupsScreen({ navigation }) {
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Chat</Text>
+          <Text>{newMessage} </Text>
           <Menu
             visible={visible}
             onDismiss={closeMenu}
@@ -291,14 +336,14 @@ export default function GroupsScreen({ navigation }) {
             onChangeText={SetsearchText}
           />
         </View>
-        <ScrollView>
-          <Text style={styles.sectionTitle}>ALL CHATS</Text>
-          <FlatList
-            data={groups}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderChatItem}
-          />
-        </ScrollView>
+        <FlatList
+          data={groups}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderChatItem}
+          ListHeaderComponent={
+            <Text style={styles.sectionTitle}>ALL CHATS</Text>
+          }
+        />
       </View>
     </Provider>
   );
