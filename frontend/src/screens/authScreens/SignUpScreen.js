@@ -23,7 +23,7 @@ const SignUpScreen = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [cPassword, setcPassword] = useState("");
   const [avatar, setAvatar] = useState("");
-  const { isloading, setIsLoading } = useState(false);
+  const [isloading, setIsLoading] = useState(false);
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images", "videos"],
@@ -95,6 +95,7 @@ const SignUpScreen = ({ navigation }) => {
       });
 
       const data = await response.json();
+      console.log(data);
 
       if (response.ok) {
         Alert.alert(
