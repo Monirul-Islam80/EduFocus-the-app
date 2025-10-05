@@ -26,7 +26,7 @@ exports.register = async (req, res) => {
       JWT_SECRET,
       { expiresIn: "7d" }
     );
-    await sendVerificationEmail(user);
+    // await sendVerificationEmail(user);
     res.status(201).json({
       token,
       user: {
